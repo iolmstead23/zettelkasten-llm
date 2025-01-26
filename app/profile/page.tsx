@@ -4,8 +4,22 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 import { Suspense, useState } from "react";
 
-/** This is the page that allows profile information to be updated */
-export default function Profile() {
+/**
+ * User profile management page
+ * @component
+ *
+ * @remarks
+ * Features:
+ * - Personal information management
+ * - Avatar upload (placeholder)
+ * - Password change functionality (placeholder)
+ * - Session management
+ * - Account deletion
+ * - Auth0 integration
+ *
+ * @returns {JSX.Element} Profile settings page
+ */
+export default function Profile(): React.JSX.Element {
   const { user, error, isLoading } = useUser();
 
   const [firstName, setFirstName] = useState<string>("");
@@ -13,6 +27,12 @@ export default function Profile() {
   const [email, setEmail] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
 
+  /**
+   * Handles saving profile data to backend
+   * @function
+   * @param {Object} data - Profile data to save
+   * @returns {Promise<void>}
+   */
   const handleSave = async (data: Object) => {
     try {
       const response = await fetch("/api/db", {

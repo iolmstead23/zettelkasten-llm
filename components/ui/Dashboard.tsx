@@ -1,24 +1,33 @@
 "use client";
 
-import { Suspense } from "react";
-import FileTreeSidebar from "@/components/ui/FileTree/FileTreeSidebar";
+import { Suspense, useCallback, useEffect, useRef } from "react";
+import FileTreeSidebar from "components/fileTree/FileTreeSidebar";
+import RenameFile from "components/fileTree/dialog/RenameFileDialog";
+import NewItem from "components/fileTree/dialog/NewItemDialog";
+import Notification from "components/ui/Notification";
+import FileInfoDisplay from "components/editor/FileInfoDisplay";
+import EditorFileOptions from "components/editor/EditorFileOptions";
+import DeleteItem from "components/fileTree/dialog/DeleteConfirmDialog";
+import EditorComponent from "components/editor/EditorComponent";
+import Link from "next/link";
 import {
   useDeleteToggleContext,
   useNewItemToggleContext,
   useNotifyToggleContext,
   useRenameToggleContext,
-  useSelectedEditContext,
-  useSelectedIndexContext,
-} from "@/components/ui/UIProvider";
-import RenameFile from "@/components/ui/FileTree/RenameFileDialog";
-import NewItem from "@/components/ui/FileTree/NewItemDialog";
-import Notification from "@/components/ui/Notification";
-import FileInfoDisplay from "@/components/ui//FileInfoDisplay";
-import EditorFileOptions from "@/components/ui/EditorFileOptions";
-import DeleteItem from "@/components/ui/FileTree/DeleteConfirmDialog";
-import EditorComponent from "@/components/editor/EditorComponent";
-import Link from "next/link";
+} from "components/providers/subproviders/ToggleProvider";
+import { useSelectedIndexContext } from "components/providers/subproviders/SelectedIndexProvider";
+import { useSelectedEditContext } from "components/providers/subproviders/SelectedEditIndexProvider";
+import { useLogger } from "components/logging/LogWrapper";
+import { LogEntryMetadata, LogLevel } from "types/types";
 
+/**
+ * Renders a welcome screen for new users in the Zettelkasten system
+ *
+ * @returns {JSX.Element} Welcome screen with instructions and project link
+ * @category Components
+ * @subcategory UI
+ */
 const coverScreen = () => {
   return (
     <div className="w-full h-[80vh] flex items-left border border-gray-200 rounded-lg bg-white">
@@ -30,9 +39,9 @@ const coverScreen = () => {
         <br />
         File Options will appear on the top of the editor.
         <br />
-        Make sure to save all of your work.{" "}
+        Make sure to save all of your work.
         <span className="text-lg font-bold:">
-          !! Linked Edges won't work unless they are saved first!!
+          !! Linked Edges wont work unless they are saved first !!
         </span>
         <br />
         You can create new files and also create folders to store your notes
@@ -41,7 +50,7 @@ const coverScreen = () => {
         Please enjoy!
         <br />
         <br />
-        Developed by Ian Olmstead.{" "}
+        Developed by Ian Olmstead.
         <Link
           href="https://github.com/iolmstead23/Zettelkasten-LLM"
           className="font-bold text-lg text-purple-600"
@@ -53,52 +62,112 @@ const coverScreen = () => {
   );
 };
 
-/** This is the main Dashboard component */
+/**
+ * Dashboard Component for Zettelkasten Note Management System
+ *
+ * Provides a comprehensive UI for file editing, management, and navigation
+ *
+ * @returns {JSX.Element} Comprehensive dashboard layout
+ *
+ * @category Components
+ * @subcategory UI
+ *
+ * @example
+ * ```tsx
+ * <Dashboard />
+ * ```
+ *
+ * @see FileTreeSidebar
+ * @see EditorComponent
+ * @see Notification
+ */
 export default function Dashboard() {
-  /** This lets us turn the rename dialog on and off */
+  /** Context for managing rename dialog state */
   const renameToggle = useRenameToggleContext();
-  /** This lets us turn the delete dialog on and off */
+
+  /** Context for managing delete dialog state */
   const deleteToggle = useDeleteToggleContext();
-  /** This lets us turn the new item dialog on and off */
+
+  /** Context for managing new item dialog state */
   const newItemToggle = useNewItemToggleContext();
-  /** This keeps track of which item is selected on the file tree */
+
+  /** Context for tracking selected file tree item */
   const selectedInfo = useSelectedIndexContext();
-  /** This allows us to trigger a notification */
+
+  /** Context for managing notification system */
   const notifyToggle = useNotifyToggleContext();
 
+  /** Current selected edit index from context */
   const { selectedEditIndex } = useSelectedEditContext();
   const selectedIndex = selectedEditIndex?.index;
 
+  /** Logger hook for capturing system events */
+  const { addLogs } = useLogger();
+
+  /**
+   * Handles logging of various events
+   *
+   * @param {Object} params - Logging parameters
+   * @param {string} params.message - Log message
+   * @param {LogLevel} params.level - Log level
+   * @returns {Promise<void>}
+   */
+  const handleLogger = useCallback(
+    async ({
+      message,
+      level,
+      metadata,
+    }: {
+      message: string;
+      level: LogLevel;
+      metadata?: LogEntryMetadata;
+    }) => {
+      try {
+        await addLogs({
+          message,
+          level,
+          metadata: { ...metadata, component: "Dashboard" },
+        });
+      } catch (error: any) {
+        console.error("Log submission error", error.message);
+      }
+    },
+    [addLogs]
+  );
+
+  /**
+   * Logs component mount event when the Dashboard is first rendered
+   */
+  useEffect(() => {
+    handleLogger({ message: "Dashboard Mounted", level: "DEBUG" });
+  }, [handleLogger]);
+
   return (
     <main className="xl:pl-72 max-h-full">
-      {renameToggle.renameIsOpen === true && (
-        <div>
-          <RenameFile
-            id={selectedInfo.selectedIndex[0] as number}
-            name={selectedInfo.selectedIndex[1] as string}
-          />
-        </div>
-      )}
-      {newItemToggle.newIsOpen === true && (
-        <div>
-          <NewItem />
-        </div>
-      )}
-      {deleteToggle.deleteIsOpen === true && (
-        <div>
-          <DeleteItem id={selectedInfo.selectedIndex[0] as number} />
-        </div>
-      )}
+      {/* Conditional rendering of dialogs and notifications */}
+      <div>
+        <RenameFile
+          index={selectedInfo.selectedIndex.index}
+          name={selectedInfo.selectedIndex.content_name}
+        />
+      </div>
+      <div>
+        <NewItem />
+      </div>
+      <div>
+        <DeleteItem id={selectedInfo.selectedIndex.index} />
+      </div>
+      
       {notifyToggle.notifyToggle == true && (
         <div>
           <Notification />
         </div>
       )}
+
       <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
-        {/* Main area */}
         <div className="lg:pl-20">
           {selectedIndex != -1 ? (
-            <Suspense fallback={<p className="text-center">Loading...</p>}>
+            <div>
               <div className="my-2">
                 <div className="relative items-center flex">
                   <EditorFileOptions />
@@ -114,10 +183,12 @@ export default function Dashboard() {
                   <FileInfoDisplay />
                 </div>
               </div>
-            </Suspense>
+            </div>
           ) : (
             coverScreen()
           )}
+
+          {/* File tree sidebar */}
           <aside
             className="absolute w-72 bottom-0 left-20 top-16 hidden overflow-y-auto border-r border-gray-200 px-4 py-6 sm:px-6 lg:px-8 xl:block"
             onContextMenu={(e) => {

@@ -8,13 +8,15 @@ import {
   Bars3Icon,
 } from "@heroicons/react/24/outline";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import Profile from "@/components/ui//Profile";
+import Profile from "components/ui//Profile";
 import Link from "next/link";
 import Image from "next/image";
-import Search from "@/components/ui/Searchbar";
-import { usePathname } from "next/navigation";
+import Search from "components/ui/Searchbar";
+import { usePathname, useRouter } from "next/navigation";
+import { useLogger } from "components/logging/LogWrapper";
+import { LogEntryMetadata, LogLevel } from "types/types";
 
 const navigation = [
   // Turn on more features as they are developed
@@ -37,19 +39,77 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-/** The sidebar is responsive and will hide on mobile */
+/**
+ * @component
+ * @remarks
+ * Provides a responsive sidebar navigation system with:
+ * - Mobile and desktop layouts
+ * - Dynamic navigation links
+ * - Current page highlighting
+ * - Collapsible mobile menu
+ *
+ * @returns {JSX.Element} Fully responsive sidebar navigation
+ * @see Profile
+ * @see Search
+ */
 export default function Sidebars() {
   /** This allows us to toggle the sidebar open and close */
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { addLogs } = useLogger();
 
-  // Function to check if a nav item is current
+  /**
+   * Determines if the current navigation item is the active page
+   *
+   * @param {string} href - Navigation link href
+   * @returns {boolean} Whether the item is the current page
+   */
   const isCurrentPage = (href: string) => {
-    if (href === "/") {
-      return pathname === href;
+    if (pathname === null) return false;
+    if (href === pathname) {
+      return true;
     }
     return pathname.startsWith(href);
   };
+
+  /**
+   * Handles logging of navigation and component events
+   *
+   * @param {Object} params - Logging parameters
+   * @param {string} params.message - Log message
+   * @param {LogLevel} params.level - Log severity level
+   * @returns {Promise<void>}
+   */
+  const handleLogger = useCallback(
+    async ({
+      message,
+      level,
+      metadata,
+    }: {
+      message: string;
+      level: LogLevel;
+      metadata?: LogEntryMetadata;
+    }) => {
+      try {
+        await addLogs({
+          message,
+          level,
+          metadata: { ...metadata, component: "Sidebar" },
+        });
+      } catch (error) {
+        console.error("Log submission error", error);
+      }
+    },
+    [addLogs]
+  );
+
+  /**
+   * Logs component mount event
+   */
+  useEffect(() => {
+    handleLogger({ message: "Sidebar Mounted", level: "DEBUG" });
+  }, [handleLogger]);
 
   return (
     <>
@@ -128,7 +188,30 @@ export default function Sidebars() {
                                 : "text-gray-400 hover:text-white hover:bg-gray-800",
                               "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                             )}
-                            onClick={() => setSidebarOpen(false)}
+                            onClick={(e) => {
+                              setSidebarOpen(false);
+                              try {
+                                handleLogger({
+                                  message: `Navigating to ${item.href}`,
+                                  level: "INFO",
+                                });
+                                e.preventDefault();
+                                router.push(item.href);
+                              } catch (error) {
+                                handleLogger({
+                                  message: "Navigation error".concat(
+                                    JSON.stringify({
+                                      href: item.href,
+                                      error:
+                                        error instanceof Error
+                                          ? error.message
+                                          : null,
+                                    })
+                                  ),
+                                  level: "ERROR",
+                                });
+                              }
+                            }}
                           >
                             <item.icon
                               className="h-6 w-6 shrink-0"

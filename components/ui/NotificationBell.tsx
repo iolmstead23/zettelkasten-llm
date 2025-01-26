@@ -1,6 +1,22 @@
 import { BellIcon } from "@heroicons/react/20/solid";
 
-/** This feature will allow the user to see if there have been any notifications */
+/**
+ * Notification bell component for displaying system notifications
+ * @component
+ * @example
+ * return (
+ *   <NotificationBell />
+ * )
+ *
+ * @remarks
+ * Currently a dummy component:
+ * - Displays notification bell icon
+ * - No active functionality
+ * - Placeholder for future notification system
+ * - Visual separator included for desktop layout
+ *
+ * @returns {JSX.Element} Notification bell button with separator
+ */
 export default function NotificationBell() {
   return (
     <div className="flex items-center gap-x-4 lg:gap-x-6">

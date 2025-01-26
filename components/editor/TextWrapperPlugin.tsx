@@ -10,13 +10,35 @@ import {
   LexicalCommand,
 } from "lexical";
 import { useEffect } from "react";
-import { $createEdgeNode } from "./EdgeNode";
+import { $createEdgeNode } from "components/editor/EdgeNode";
 
+/**
+ * Command for wrapping text with edge nodes
+ * @type {LexicalCommand<{text: string, sourceId: string, targetId: string}>}
+ */
 export const WRAP_EDGE_COMMAND: LexicalCommand<{
   text: string;
-  id: string;
+  sourceId: string;
+  targetId: string;
 }> = createCommand();
 
+/**
+ * Lexical editor plugin for wrapping text with edge nodes
+ * @component
+ * @example
+ * return (
+ *   <TextWrapperPlugin />
+ * )
+ *
+ * @remarks
+ * Features:
+ * - Custom command registration for edge wrapping
+ * - Paragraph node creation
+ * - Edge node insertion
+ * - Selection handling
+ *
+ * @returns {null} Plugin returns null as it only provides functionality
+ */
 export function TextWrapperPlugin(): null {
   const [editor] = useLexicalComposerContext();
 
@@ -28,10 +50,14 @@ export function TextWrapperPlugin(): null {
         editor.update(() => {
           const selection = $getSelection();
           const root = $getRoot();
+          const edgeNode = $createEdgeNode(
+            payload.sourceId,
+            payload.targetId,
+            payload.text
+          );
           if (!$isRangeSelection(selection)) {
             // If no selection, insert at the end of the root
             const paragraphNode = $createParagraphNode();
-            const edgeNode = $createEdgeNode(payload.text);
             paragraphNode.append(edgeNode);
             root.append(paragraphNode);
             return true;
@@ -40,7 +66,6 @@ export function TextWrapperPlugin(): null {
           try {
             // Create a paragraph node to wrap the EdgeNode
             const paragraphNode = $createParagraphNode();
-            const edgeNode = $createEdgeNode(payload.text);
 
             paragraphNode.append(edgeNode);
 

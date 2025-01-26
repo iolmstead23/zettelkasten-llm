@@ -1,0 +1,95 @@
+
+Context provider for application notifications
+
+
+---
+
+title: NotificationProvider
+---
+
+# NotificationProvider
+
+
+
+## Table of Contents
+
+- [Examples](#examples)
+- [Remarks](#remarks)
+
+
+
+### Remarks
+
+Provides:
+- Notification message state
+- Notification type (success/error)
+- State management methods
+
+
+### Example
+
+```tsx
+return (
+  <NotificationProvider>
+    {children}
+  </NotificationProvider>
+)
+```
+
+
+
+
+
+
+
+
+
+## Exported Functions & Hooks
+
+
+
+### useNotifyContentContext
+
+
+## Table of Contents
+
+- [Examples](#examples)
+
+
+
+
+
+### Example
+
+```tsx
+```tsx
+const { notifyContent, setNotifyContent } = useNotifyContentContext();
+
+// Show a success notification
+setNotifyContent({
+  type: "success",
+  message: "Operation completed successfully"
+});
+```
+```
+
+
+
+
+
+
+### Returns
+
+Context object containing notification state and setter function
+
+### Throws
+
+Error if used outside of NotificationProvider
+
+
+
+## Source
+
+```tsx
+providers\subproviders\NotificationProvider.tsx
+```

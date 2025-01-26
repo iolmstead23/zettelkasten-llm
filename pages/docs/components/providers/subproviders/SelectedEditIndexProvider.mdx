@@ -1,0 +1,83 @@
+
+Provider component for managing editor file selection state
+
+
+---
+
+title: SelectedEditIndexProvider
+---
+
+# SelectedEditIndexProvider
+
+
+
+## Table of Contents
+
+- [Props](#props)
+- [Types](#types)
+
+
+### Types
+
+```typescript
+
+onSelectionChange: ((selection: SelectedEditIndexType) => void)
+```
+
+
+
+
+
+
+### Props
+
+#### `onSelectionChange`
+
+- **Type**: `((selection: SelectedEditIndexType) => void)`
+
+- **Required**: No
+
+
+
+
+
+### Returns
+
+Provider component wrapping children
+
+
+
+## Exported Functions & Hooks
+
+
+
+### useSelectedEditContext
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Returns
+
+Context object containing selection state and management methods
+
+### Throws
+
+Error if used outside of SelectedEditIndexContextProvider
+
+
+
+## Source
+
+```tsx
+providers\subproviders\SelectedEditIndexProvider.tsx
+```

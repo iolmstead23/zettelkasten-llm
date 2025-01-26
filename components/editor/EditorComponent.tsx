@@ -1,29 +1,47 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { $getRoot } from "lexical";
-import {
-  useSaveContext,
-  useSelectedEditContext,
-} from "@/components/ui/UIProvider";
+import { useSelectedEditContext } from "components/providers/subproviders/SelectedEditIndexProvider";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import Toolbar from "@/components/ui/Toolbar";
-import { SelectedEditIndexType } from "@/types";
-import { TextWrapperPlugin } from "@/components/editor/TextWrapperPlugin";
+import Toolbar from "components/editor/Toolbar";
+import { LogEntryMetadata, LogLevel, SelectedEditIndexType } from "types/types";
+import { TextWrapperPlugin } from "components/editor/TextWrapperPlugin";
+import { useLogger } from "components/logging/LogWrapper";
 
 function EditorComponent() {
   const { selectedEditIndex, setSelectedEditIndex } = useSelectedEditContext();
   const [editor] = useLexicalComposerContext();
 
-  // Add a debug log function
-  const logEditorState = (context: string) => {
-    console.log(`Editor State Debug - ${context}:`, {
-      selectedEditIndex,
-      contents: selectedEditIndex?.contents,
-    });
-  };
+  const { addLogs } = useLogger();
+  const handleLogger = useCallback(
+    async ({
+      message,
+      level,
+      metadata,
+    }: {
+      message: string;
+      level: LogLevel;
+      metadata?: LogEntryMetadata;
+    }) => {
+      try {
+        await addLogs({
+          message,
+          level,
+          metadata: { ...metadata, component: "SaveProvider" },
+        });
+      } catch (error: any) {
+        handleLogger({
+          message: "Log submission error",
+          level: "ERROR",
+          metadata: { error: error.message },
+        });
+      }
+    },
+    [addLogs]
+  );
 
   function onChange(editorState: any): void {
     try {
@@ -43,15 +61,25 @@ function EditorComponent() {
           setSelectedEditIndex(editData);
         }
       });
-    } catch (err) {
-      console.error("Error in onChange:", err);
-      logEditorState("onChange Error");
+    } catch (error: any) {
+      handleLogger({
+        message: `Editor State Debug - ${editorState}:`,
+        level: "DEBUG",
+        metadata: {
+            error: error.message,
+          selectedEditIndex,
+          contents: selectedEditIndex?.contents,
+        },
+      });
     }
   }
 
   useEffect(() => {
     if (!selectedEditIndex?.contents?.root) {
-      console.warn("No root content available");
+      handleLogger({
+        message: "No root content available",
+        level: "WARN",
+      });
       return;
     }
 
@@ -59,8 +87,12 @@ function EditorComponent() {
       const serializedContent = JSON.stringify(selectedEditIndex.contents);
       const parsedEditorState = editor.parseEditorState(serializedContent);
       editor.setEditorState(parsedEditorState);
-    } catch (err) {
-      console.error("Editor state error:", err);
+    } catch (error: any) {
+      handleLogger({
+        message: "Editor state error",
+        level: "ERROR",
+        metadata: { error: error.message },
+      });
     }
   }, [selectedEditIndex?.index, editor]);
 

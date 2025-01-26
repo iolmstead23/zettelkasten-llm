@@ -1,7 +1,24 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import NotificationBell from "@/components/ui/NotificationBell";
+import NotificationBell from "components/ui/NotificationBell";
 
-/** This feature allows the user to search through their files */
+/**
+ * Search interface component for file system
+ * @component
+ * @example
+ * return (
+ *   <Search />
+ * )
+ *
+ * @remarks
+ * Currently a dummy component:
+ * - Search input field with icon
+ * - Form structure in place
+ * - No active search functionality
+ * - Includes NotificationBell component
+ * - Placeholder for future search implementation
+ *
+ * @returns {JSX.Element} Search bar with notification bell
+ */
 export default function Search() {
   return (
     <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">

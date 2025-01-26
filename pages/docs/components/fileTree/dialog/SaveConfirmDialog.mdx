@@ -1,0 +1,85 @@
+
+Save confirmation dialog component
+
+
+---
+
+title: SaveConfirmDialog
+---
+
+# SaveConfirmDialog
+
+
+
+## Table of Contents
+
+- [Props](#props)
+- [Examples](#examples)
+- [Remarks](#remarks)
+- [Types](#types)
+
+
+### Types
+
+```typescript
+
+onSave: () => void
+onDontSave: () => void
+```
+
+
+### Remarks
+
+Displays a modal dialog for confirming file save actions
+Features:
+- Save confirmation message
+- Save/Don't Save options
+- Callback handlers for actions
+
+
+### Example
+
+```tsx
+return (
+  <SaveDialogueItem
+    onSave={() => handleSave()}
+    onDontSave={() => handleDontSave()}
+  />
+)
+```
+
+
+### Props
+
+#### `onSave`
+
+- **Type**: `() => void`
+
+- **Required**: Yes
+
+
+#### `onDontSave`
+
+- **Type**: `() => void`
+
+- **Required**: Yes
+
+
+
+
+
+### Returns
+
+Save confirmation dialog
+
+
+
+
+
+
+
+## Source
+
+```tsx
+fileTree\dialog\SaveConfirmDialog.tsx
+```

@@ -4,12 +4,38 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { Fragment, Suspense } from "react";
 import Image from "next/image";
 
-/** I have no idea what this does */
+/**
+ * Utility function for combining class names
+ * @function
+ * @param {...string} classes - CSS class names to combine
+ * @returns {string} Combined class names string
+ */
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-/** This is the profile component that allows the user to access the profile page and login/logout feature */
+/**
+ * User profile management component
+ * @component
+ * @example
+ * return (
+ *   <Profile />
+ * )
+ *
+ * @remarks
+ * Features:
+ * - Auth0 integration for user authentication
+ * - Profile image display
+ * - Username display
+ * - Dropdown menu for profile actions
+ * - Sign in/out functionality
+ *
+ * Note: Some features are placeholder/dummy:
+ * - Profile page link is non-functional
+ * - Profile management features pending
+ *
+ * @returns {JSX.Element} Profile dropdown component
+ */
 export default function Profile() {
   const { user } = useUser();
 

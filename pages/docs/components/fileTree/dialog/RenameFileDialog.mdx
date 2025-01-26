@@ -1,0 +1,83 @@
+
+Dialog component for renaming files and folders
+
+
+---
+
+title: RenameFileDialog
+---
+
+# RenameFileDialog
+
+
+
+## Table of Contents
+
+- [Props](#props)
+- [Examples](#examples)
+- [Remarks](#remarks)
+- [Types](#types)
+
+
+### Types
+
+```typescript
+
+name: string
+index: number
+```
+
+
+### Remarks
+
+Features:
+- Name input field
+- Extension preservation
+- Length validation (max 15 chars)
+- Success/error notifications
+- Auto-sort after rename
+
+
+### Example
+
+```tsx
+return (
+  <RenameFile name="example.md" index={1} />
+)
+```
+
+
+### Props
+
+#### `name`
+
+- **Type**: `string`
+
+- **Required**: Yes
+
+
+#### `index`
+
+- **Type**: `number`
+
+- **Required**: Yes
+
+
+
+
+
+### Returns
+
+Rename dialog component
+
+
+
+
+
+
+
+## Source
+
+```tsx
+fileTree\dialog\RenameFileDialog.tsx
+```

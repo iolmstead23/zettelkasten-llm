@@ -131,12 +131,33 @@ const days = [
 ];
 const selectedDay: any = days.find((day) => day.isSelected);
 
+/**
+ * Utility for combining CSS class names
+ * @function
+ * @param {...string} classes - CSS classes to combine
+ * @returns {string} Combined class string
+ */
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-/** This is the calender component */
-export default function Calender() {
+/**
+ * Calendar view component for event management
+ * @component
+ *
+ * @remarks
+ * Currently a demo implementation featuring:
+ * - Monthly calendar view
+ * - Event display
+ * - Day selection
+ * - Responsive layout
+ * - Mobile optimization
+ *
+ * Note: Currently uses static data
+ *
+ * @returns {JSX.Element} Calendar interface
+ */
+export default function Calender(): React.JSX.Element {
   return (
     <div className="lg:flex lg:h-full lg:flex-col xl:pl-[8em] max-h-full">
       <header className="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
@@ -422,7 +443,10 @@ export default function Calender() {
                       : undefined
                   }
                 >
-                  {day.date.split("-").pop()?.replace(/^0/, "")}
+                  {day.date
+                    .split("-")
+                    .pop()
+                    ?.replace(/^0/, "")}
                 </time>
                 {day.events.length > 0 && (
                   <ol className="mt-2">
@@ -482,7 +506,10 @@ export default function Calender() {
                     "ml-auto"
                   )}
                 >
-                  {day.date.split("-").pop()?.replace(/^0/, "")}
+                  {day.date
+                    .split("-")
+                    .pop()
+                    ?.replace(/^0/, "")}
                 </time>
                 <span className="sr-only">{day.events.length} events</span>
                 {day.events.length > 0 && (

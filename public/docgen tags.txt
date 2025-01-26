@@ -1,0 +1,10 @@
+/**
+ * @title [Component Name] - Used for navigation/heading
+ * @component - Marks this as a React component
+ * @remarks - Used for detailed description and features
+ * @param - Documents component props
+ * @returns - Documents return value
+ * @see - References to related components
+ * @interface - Documents TypeScript interfaces
+ * @type - Documents TypeScript types
+ */

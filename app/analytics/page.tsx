@@ -29,7 +29,22 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Analytics() {
+/**
+ * Analytics dashboard component
+ * @component
+ *
+ * @remarks
+ * Currently a demo implementation showing:
+ * - Financial metrics
+ * - Statistical data
+ * - Performance indicators
+ * - Responsive grid layout
+ *
+ * Note: Uses static demo data
+ *
+ * @returns {JSX.Element} Analytics dashboard view
+ */
+export default function Analytics(): React.JSX.Element {
   return (
     <main className="lg:pl-20">
       <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">

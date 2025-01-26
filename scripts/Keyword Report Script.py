@@ -15,7 +15,7 @@ nltk.download('averaged_perceptron_tagger')
 
 stop_words = set(stopwords.words('english'))
 
-file_path = "./Zettelkasten"
+file_path = "../Zettelkasten"
 markdown_text = []
 tagged_tokens = []
 tokens = []
@@ -69,8 +69,8 @@ def markdown_directory_to_keywords(path, unique):
 
 if __name__ == "__main__":
     try:
-        # Save Report
-        with open(f"{file_path}/output/keyword report.txt", 'w') as file:
+        # Save Report with UTF-8 encoding
+        with open(f"{file_path}/output/keyword report.txt", 'w', encoding='utf-8') as file:
             file.write(f"Unique Nouns: {markdown_directory_to_keywords(f'{file_path}/', True)}")
             file.write("\n\nFrequency Counts:\n\n")
             for w, f in sorted(markdown_directory_to_keywords(f"{file_path}/", False), key=lambda a: a[1], reverse=True):

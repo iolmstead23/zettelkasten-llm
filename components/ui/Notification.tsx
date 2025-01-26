@@ -5,12 +5,28 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import {
-  useNotifyContentContext,
-  useNotifyToggleContext,
-} from "@/components/ui/UIProvider";
 import { useEffect } from "react";
+import { useNotifyToggleContext } from "components/providers/subproviders/ToggleProvider";
+import { useNotifyContentContext } from "components/providers/subproviders/NotificationProvider";
 
+/**
+ * @component
+ * 
+ * Toast notification component for system feedback
+ * 
+ * @remarks
+ * Features:
+ * - Success/Error notifications
+ * - Auto-dismiss after 3 seconds
+ * - Manual close option
+ * - Accessible aria live region
+ * - Icon support for different notification types
+ * 
+ * @see {@link NotificationProvider}
+ * @see {@link NotifyToggleContext}
+ * 
+ * @returns {JSX.Element} Notification toast component
+ */
 export default function Notification() {
   /** This allows us to toggle the notification on and off */
   const notifyToggle = useNotifyToggleContext();
@@ -23,7 +39,7 @@ export default function Notification() {
       notifyToggle.setNotifyToggle(false);
     }, 3000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [notifyToggle]);
 
   /** This sets the appropriate icon */
   const symbol: any = (type: string) => {
@@ -59,18 +75,18 @@ export default function Notification() {
             <div className="p-4">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  {symbol(notifyContent.notifyContent[0])}
+                  {symbol(notifyContent.notifyContent.type)}
                 </div>
                 <div className="ml-3 w-0 flex-1 pt-0.5">
                   <p className="text-sm font-medium text-gray-900">
-                    {notifyContent.notifyContent[1]}
+                    {notifyContent.notifyContent.message}
                   </p>
                 </div>
                 <div className="ml-4 flex flex-shrink-0">
                   <button
                     type="button"
                     onClick={() => {
-                      notifyContent.setNotifyContent(["", ""]);
+                      notifyContent.setNotifyContent({ type: "info", message: "" });
                       notifyToggle.setNotifyToggle(false);
                     }}
                     className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
